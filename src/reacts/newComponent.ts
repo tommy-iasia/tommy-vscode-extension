@@ -13,13 +13,19 @@ function createProvider() {
     },
     {
       provideCompletionItems(document) {
-        const text = document.getText();
-        if (text.length > 10) {
+        const documentText = document.getText();
+        if (documentText.length > 10) {
           return [];
         }
 
+        const trimmedText = documentText.trim();
+
         const completion = new vscode.CompletionItem(
-          "New Component",
+          trimmedText.startsWith("e")
+            ? "Export New Component"
+            : trimmedText.startsWith("f")
+            ? "New Function Component"
+            : "New Component",
           vscode.CompletionItemKind.Snippet
         );
 
