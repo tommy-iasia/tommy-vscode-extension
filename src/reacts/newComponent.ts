@@ -6,33 +6,33 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 function createProvider() {
-  return vscode.languages.registerCodeActionsProvider(
+  return vscode.languages.registerCompletionItemProvider(
     {
       language: "typescriptreact",
       scheme: "file",
     },
     {
-      provideCodeActions(
-        document: vscode.TextDocument,
-        range: vscode.Range
-      ): vscode.ProviderResult<vscode.CodeAction[]> {
-        const text = document.getText();
-        if (text.length > 10) {
+      provideCompletionItems(document) {
+        const documentText = document.getText();
+        if (documentText.length > 10) {
           return [];
         }
 
-        const codeAction = new vscode.CodeAction(
-          "Insert react component snippet",
-          vscode.CodeActionKind.QuickFix
+        const completion = new vscode.CompletionItem(
+          "New Component",
+          vscode.CompletionItemKind.Snippet
         );
 
-        codeAction.command = {
+        completion.insertText = new vscode.SnippetString("");
+
+        completion.detail = "Create a new TSX Component";
+
+        completion.command = {
+          title: "newComponent",
           command: "tommy-vscode-extension.reacts.newComponent",
-          title: "Insert react component snippet",
-          arguments: [document, range],
         };
 
-        return [codeAction];
+        return [completion];
       },
     }
   );
