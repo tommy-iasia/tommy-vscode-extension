@@ -13,8 +13,8 @@ function createProvider() {
     },
     {
       provideCompletionItems(document) {
-        const documentText = document.getText();
-        if (documentText.length > 10) {
+        const text = document.getText();
+        if (text.length > 10) {
           return [];
         }
 
@@ -25,7 +25,7 @@ function createProvider() {
 
         completion.insertText = new vscode.SnippetString("");
 
-        completion.detail = "Create a new TSX Component";
+        completion.detail = "Insert a new TSX Component";
 
         completion.command = {
           title: "newComponent",

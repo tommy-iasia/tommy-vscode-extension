@@ -33,10 +33,11 @@ function createProvider() {
       scheme: "file",
     },
     {
-      provideCodeActions(
-        document: vscode.TextDocument,
-        range: vscode.Range
-      ): vscode.ProviderResult<vscode.CodeAction[]> {
+      provideCodeActions(document, range, context) {
+        if (!context.only?.contains(vscode.CodeActionKind.QuickFix)) {
+          return [];
+        }
+
         const text = document.getText();
 
         const match = /export function \w+\s*\([^)]*\)\s*{\s*/.exec(text);
