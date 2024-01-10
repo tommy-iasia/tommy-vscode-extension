@@ -2,7 +2,7 @@
 
 This is an extension shared to our colleagues for a bit faster and easier coding.
 
-However, please be noticed that this extension is designed according to coding styles and conventions Tommy following.
+Be noticed that this extension is designed according to coding styles and conventions Tommy following.
 
 ## 1. Checkout the Project
 
