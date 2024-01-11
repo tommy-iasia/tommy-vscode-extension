@@ -159,7 +159,8 @@ function tryAddParameter(
 
 export function getClassName(path: string) {
   const parts = path.split(/[\\/]/);
-  return parts[parts.length - 1];
+  const name = parts[parts.length - 1];
+  return name.replace(".tsx", "");
 }
 
 export function isComponent(
