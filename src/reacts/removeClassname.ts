@@ -12,8 +12,7 @@ import {
   isTemplateExpression,
 } from "typescript";
 import * as vscode from "vscode";
-import { isComponent, removeParatheses } from "./addClassname";
-import { getPathParts } from "./newComponent";
+import { getClassName, isComponent, removeParatheses } from "./addClassname";
 
 export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(createProvider());
@@ -100,8 +99,7 @@ function tryRemoveParameter(
   document: vscode.TextDocument,
   editBuilder: vscode.TextEditorEdit
 ) {
-  const pathParts = getPathParts(sourceFile.fileName);
-  const className = pathParts[pathParts.length - 1];
+  const className = getClassName(sourceFile.fileName);
 
   sourceFile.forEachChild((node) => {
     if (!isComponent(node, className)) {
@@ -160,8 +158,7 @@ function tryRemoveUsage(
   document: vscode.TextDocument,
   editBuilder: vscode.TextEditorEdit
 ) {
-  const pathParts = getPathParts(sourceFile.fileName);
-  const className = pathParts[pathParts.length - 1];
+  const className = getClassName(sourceFile.fileName);
 
   sourceFile.forEachChild((outerNode) => {
     if (isComponent(outerNode, className)) {

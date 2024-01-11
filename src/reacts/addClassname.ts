@@ -19,7 +19,6 @@ import {
   isTemplateExpression,
 } from "typescript";
 import * as vscode from "vscode";
-import { getPathParts } from "./newComponent";
 
 export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(createProvider());
@@ -106,8 +105,7 @@ function tryAddParameter(
   document: vscode.TextDocument,
   editBuilder: vscode.TextEditorEdit
 ) {
-  const pathParts = getPathParts(sourceFile.fileName);
-  const className = pathParts[pathParts.length - 1];
+  const className = getClassName(sourceFile.fileName);
 
   sourceFile.forEachChild((node) => {
     if (isComponent(node, className)) {
@@ -159,6 +157,11 @@ function tryAddParameter(
   });
 }
 
+export function getClassName(path: string) {
+  const parts = path.split(/[\\/]/);
+  return parts[parts.length - 1];
+}
+
 export function isComponent(
   node: Node,
   className: string
@@ -177,8 +180,7 @@ function tryAddUsage(
   document: vscode.TextDocument,
   editBuilder: vscode.TextEditorEdit
 ) {
-  const pathParts = getPathParts(sourceFile.fileName);
-  const className = pathParts[pathParts.length - 1];
+  const className = getClassName(sourceFile.fileName);
 
   sourceFile.forEachChild((outerNode) => {
     if (isComponent(outerNode, className)) {

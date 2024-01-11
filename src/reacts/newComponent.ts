@@ -1,3 +1,5 @@
+import { readFile } from "fs/promises";
+import { join } from "path";
 import * as vscode from "vscode";
 
 export function activate(context: vscode.ExtensionContext) {
@@ -47,18 +49,18 @@ function createProvider() {
 function createCommand() {
   return vscode.commands.registerCommand(
     "tommy-vscode-extension.reacts.newComponent",
-    () => {
+    async () => {
       const editor = vscode.window.activeTextEditor;
       if (editor) {
-        const text = createSnippet(editor.document.fileName);
+        const text = await createSnippet(editor.document.fileName);
         editor.insertSnippet(new vscode.SnippetString(text));
       }
     }
   );
 }
 
-function createSnippet(filePath: string): string {
-  const pathParts = getPathParts(filePath);
+async function createSnippet(filePath: string) {
+  const pathParts = await getPathParts(filePath);
 
   const componentName = pathParts[pathParts.length - 1];
 
@@ -69,15 +71,39 @@ function createSnippet(filePath: string): string {
 }`;
 }
 
-export function getPathParts(filePath: string) {
+async function getPathParts(filePath: string) {
   const allParts = filePath.split(/[\\/]/);
 
   const startIndex = allParts.indexOf("src");
-  const validParts = allParts.slice(startIndex >= 0 ? startIndex + 1 : -1);
+  const localParts = allParts.slice(startIndex >= 0 ? startIndex + 1 : -1);
 
-  const fileName = validParts[validParts.length - 1];
+  const fileName = localParts[localParts.length - 1];
   const componentName = fileName.replace(".tsx", "");
 
-  const pathParts = validParts.slice(0, -1);
-  return [...pathParts, componentName];
+  const innerParts = [...localParts.slice(0, -1), componentName];
+
+  if (startIndex <= 2) {
+    return innerParts;
+  }
+
+  const workspacePath = join(
+    filePath,
+    ...localParts.map(() => ".."),
+    "../../package.json"
+  );
+
+  let workspaceText;
+  try {
+    workspaceText = await readFile(workspacePath, "utf8");
+  } catch {
+    return innerParts;
+  }
+
+  if (!workspaceText.includes('"workspaces":')) {
+    return innerParts;
+  }
+
+  const projectName = allParts[startIndex - 1];
+
+  return [projectName, ...innerParts];
 }
