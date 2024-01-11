@@ -28,7 +28,7 @@ function createProvider() {
     },
     {
       provideCodeActions(document, range, context) {
-        if (!context.only?.contains(vscode.CodeActionKind.QuickFix)) {
+        if (context.only?.contains(vscode.CodeActionKind.QuickFix) === false) {
           return [];
         }
 
