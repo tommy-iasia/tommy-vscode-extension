@@ -43,9 +43,16 @@ function createCommand() {
     "tommy-vscode-extension.reacts.newUseMemo",
     async () => {
       const editor = vscode.window.activeTextEditor;
+
       if (editor) {
+        const position = editor.selection.active;
+
         const text = await createSnippet();
         editor.insertSnippet(new vscode.SnippetString(text));
+
+        var newPosition = position.with(position.line + 2, 6);
+        var newSelection = new vscode.Selection(newPosition, newPosition);
+        editor.selection = newSelection;
       }
     }
   );
